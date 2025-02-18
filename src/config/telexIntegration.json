@@ -2,7 +2,7 @@
     "name": "Google Sheets Expense Logger",
     "description": "Logs expenses from Telex messages into a Google Sheets spreadsheet.",
     "integration_type": "output",
-    "category": "Finance & Accounting",
+    "category": "Finance & Payments",
     "logo_url": "https://static.sheetgo.com/wp-content/uploads/2020/05/icons-expense-tracker.svg",
     "background_color": "#00454F",
     "settings": {
