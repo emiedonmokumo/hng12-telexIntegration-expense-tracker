@@ -2,14 +2,36 @@ import app from "./app";
 import cors from 'cors';
 import path from 'path'
 import dotenv from 'dotenv';
-import { Request, Response } from "express";
+import express, { Request, Response } from "express";
 import parseExpense from "./utils/parseExpense";
 import sheets from "./config/googleSheet";
+import bodyParser from "body-parser";
 dotenv.config()
 
 const PORT = process.env.PORT || 8080;
 
-app.use(cors()) // configure when FE is connected
+const allowedOrigins = [
+    "https://telex.im",
+    "https://staging.telex.im",
+    "http://telextest.im",
+    "http://staging.telextest.im",
+];
+
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        credentials: true,
+    })
+);
+
+app.use(bodyParser.json());
+app.use(express.json());
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
