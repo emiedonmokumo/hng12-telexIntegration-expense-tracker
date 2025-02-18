@@ -31,8 +31,11 @@ const PORT = process.env.PORT || 8080;
 // );
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use(express.json());
+app.use(express.json()); // Parse JSON
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
+app.use(bodyParser.json()); // Redundant but ensures JSON parsing
+app.use(bodyParser.urlencoded({ extended: true })); // Redundant but ensures URL-encoded parsing
+
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
