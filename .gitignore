@@ -1,5 +1,6 @@
 node_modules
 src/config/hng12-telex-integration-436ad7397b76.json
+src/config/telexIntegration.json
 
 .env
 

@@ -62,8 +62,41 @@ app.post('/webhook', async (req: Request, res: Response): Promise<any> => {
 
 // Serve the Telex JSON file
 app.get("/telex-integration.json", (req, res) => {
-    res.sendFile(path.join(__dirname, 'config', 'telexIntegration.json'));
-})
+    const baseUrl = process.env.BASE_URL;
+    const integration = {
+        data: {
+            date: {
+                created_at: "2025-02-18",
+                updated_at: "2025-02-18",
+            },
+            descriptions: {
+                app_name: "Google Sheets Expense Logger",
+                app_description: "Logs expenses from Telex messages into a Google Sheets spreadsheet.",
+                app_logo: "https://static.sheetgo.com/wp-content/uploads/2020/05/icons-expense-tracker.svg",
+                app_url: baseUrl,
+                background_color: "#00454F",
+            },
+            is_active: true,
+            integration_type: "output",
+            key_features: ["- Logs expenses from Telex messages into Google Sheets"],
+            integration_category: "Finance & Payments",
+            author: "Emiedonmokumo Dick-Boro",
+            website: baseUrl,
+            settings: [
+                {
+                    label: "spreadsheet_id",
+                    type: "string",
+                    required: true,
+                    description: "Google Sheets Spreadsheet ID where expenses will be logged.",
+                },
+            ],
+            target_url: `${baseUrl}/webhook`,
+        },
+    };
+
+    res.json(integration);
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
