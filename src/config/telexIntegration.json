@@ -8,6 +8,7 @@
     "settings": {
       "spreadsheet_id": {
         "type": "string",
+        "required": true,
         "description": "Google Sheets Spreadsheet ID where expenses will be logged."
       }
     },
