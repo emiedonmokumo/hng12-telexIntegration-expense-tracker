@@ -10,27 +10,27 @@ dotenv.config()
 
 const PORT = process.env.PORT || 8080;
 
-const allowedOrigins = [
-    "https://telex.im",
-    "https://staging.telex.im",
-    "http://telextest.im",
-    "http://staging.telextest.im",
-];
+// const allowedOrigins = [
+//     "https://telex.im",
+//     "https://staging.telex.im",
+//     "http://telextest.im",
+//     "http://staging.telextest.im",
+// ];
 
-app.use(
-    cors({
-        origin: (origin, callback) => {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
-        credentials: true,
-    })
-);
+// app.use(
+//     cors({
+//         origin: (origin, callback) => {
+//             if (!origin || allowedOrigins.includes(origin)) {
+//                 callback(null, true);
+//             } else {
+//                 callback(new Error("Not allowed by CORS"));
+//             }
+//         },
+//         credentials: true,
+//     })
+// );
 
-// app.use(cors());
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
