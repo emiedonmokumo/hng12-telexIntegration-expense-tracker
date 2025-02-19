@@ -6,9 +6,11 @@ import express, { Request, Response } from "express";
 import parseExpense from "./utils/parseExpense";
 import sheets from "./config/googleSheet";
 import bodyParser from "body-parser";
+import { HfInference } from "@huggingface/inference";
 dotenv.config()
 
 const PORT = process.env.PORT || 8080;
+const hf = new HfInference(process.env.HUGGING_FACE_TOKEN);
 
 // const allowedOrigins = [
 //     "https://telex.im",
@@ -36,14 +38,23 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
 app.use(bodyParser.json()); // Redundant but ensures JSON parsing
 app.use(bodyParser.urlencoded({ extended: true })); // Redundant but ensures URL-encoded parsing
 
+app.post('/test', async (req: Request, res: Response) => {
+    const result = await hf.textGeneration({
+        model: "gpt2",
+        inputs: "Hello world",
+    });
+
+    res.status(200).json({ message: result });
+})
+
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 // Telex Webhook Endpoint
 app.post('/webhook', async (req: Request, res: Response): Promise<any> => {
     try {
-        const { text, sender } = req.body;
-        const expense = parseExpense(text);
+        const { message, sender } = req.body;
+        const expense = parseExpense(message);
         if (!expense) return res.status(400).send("No expense detected.");
 
         // Save to Google Sheets
