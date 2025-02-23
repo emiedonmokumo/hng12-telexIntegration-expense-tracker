@@ -2,18 +2,24 @@ import currencySymbolMap from "currency-symbol-map";
 import OpenAI from "openai";
 
 function parseExpense(text: string) {
-    // Updated regex to capture currency symbols more accurately
-    const regex = /(?<currency>[\$€₦£¥])?\s*(?<amount>\d+(?:[.,]\d{1,2})?)\s*(?<category>.+)?/i;
+    console.log("Received message:", JSON.stringify(text)); // Debugging log
+
+    text = text.normalize("NFC"); // Normalize Unicode
+
+    const regex = /(?<currency>[\$\€\u20A6\£\¥])?\s*(?<amount>\d+(?:[.,]\d{1,2})?)\s*(?<category>.+)?/i;
     const match = text.match(regex);
     if (!match || !match.groups) return null;
 
+    const detectedCurrency = text.includes("₦") ? "₦" : match.groups.currency || "USD"; // Force Naira check
+
     return {
-        amount: parseFloat(match.groups.amount.replace(',', '')), // Convert amount to a number
-        currency: match.groups.currency || "USD", // Default to USD if no currency symbol is found
+        amount: parseFloat(match.groups.amount.replace(',', '')),
+        currency: detectedCurrency,
         category: match.groups.category?.trim() || "Uncategorized",
         date: new Date().toISOString().split("T")[0],
     };
 }
+
 
 
 
