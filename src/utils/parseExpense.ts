@@ -6,6 +6,7 @@ async function parseExpense(text: any): Promise<any> {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `
+    Read and understand the following text to extract structured data from it.
     Extract structured expense details from the following text and return it as a JSON object with the following fields:
     - sender (string)
     - amount (number)
