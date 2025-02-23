@@ -8,8 +8,8 @@ const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 export const telexWebhook = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { message, sender } = req.body;
-        const expense = parseExpense(message);
+        const { message } = req.body;
+        const expense = await parseExpense(message);
         if (!expense) return res.status(200).send("No expense detected.");
 
         // Save to Google Sheets
@@ -18,11 +18,12 @@ export const telexWebhook = async (req: Request, res: Response): Promise<any> =>
             range: "Expenses!A:D",
             valueInputOption: "RAW",
             requestBody: {
-                values: [[expense.date, expense.amount, expense.currency, expense.category, sender]],
+                values: [[expense.date, expense.amount, expense.currency, expense.category, expense.sender]],
             },
         });
 
         res.status(200).send("Expense logged successfully");
+        // res.status(200).send(response);
     } catch (error) {
         console.error("Error logging expense:", error);
         res.status(500).send("Internal Server Error");

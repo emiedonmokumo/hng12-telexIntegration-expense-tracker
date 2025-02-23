@@ -1,54 +1,35 @@
-import currencySymbolMap from "currency-symbol-map";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-function parseExpense(text: string) {
-    console.log("Received message:", JSON.stringify(text)); // Debugging log
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as any);
 
-    text = text.normalize("NFC"); // Normalize Unicode
+async function parseExpense(text: any): Promise<any> {
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    const regex = /(?<currency>[\$\€\u20A6\£\¥])?\s*(?<amount>\d+(?:[.,]\d{1,2})?)\s*(?<category>.+)?/i;
-    const match = text.match(regex);
-    if (!match || !match.groups) return null;
+    const prompt = `
+    Extract structured expense details from the following text and return it as a JSON object with the following fields:
+    - sender (string)
+    - amount (number)
+    - currency (string)
+    - category (string)
+    - date (YYYY-MM-DD format)
+    
+    Example Output:
+    {"sender": "john doe", "amount": 150, "currency": "USD", "category": "Transportation", "date": "2022-04-15"}
+  
+    Text: """${text}"""
+    `;
 
-    const detectedCurrency = text.includes("₦") ? "₦" : match.groups.currency || "USD"; // Force Naira check
+    try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const jsonResponse: any = response.text();
 
-    return {
-        amount: parseFloat(match.groups.amount.replace(',', '')),
-        currency: detectedCurrency,
-        category: match.groups.category?.trim() || "Uncategorized",
-        date: new Date().toISOString().split("T")[0],
-    };
+        return JSON.parse(jsonResponse); // Ensure it's valid JSON
+    } catch (error) {
+        console.error("Error parsing expense:", error);
+        return null;
+    }
 }
 
-
-
-
-// const openaiKey = process.env.OPENAI_API_KEY
-
-// const openai = new OpenAI({
-//   apiKey: openaiKey,
-// });
-
-// async function parseExpense(text: string) {
-//   try {
-//     // Call the OpenAI API using the library
-//     const response = await openai.chat.completions.create({
-//       model: 'gpt-3.5-turbo',  // Updated model name
-//       messages: [
-//         {
-//           role: 'user',
-//           content: `testing to see if the api key is valid`,
-//         },
-//       ],
-//     });
-
-//     // Extract the relevant content from the response
-
-//     return response;
-//   } catch (err: any) {
-//     console.error('Error:', err.message);
-//     return null;
-//   }
-// }
 
 export default parseExpense;
